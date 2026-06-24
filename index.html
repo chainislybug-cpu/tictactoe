@@ -3,356 +3,117 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tic Tac Toe</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      background: #1a1a2e;
-      font-family: 'Segoe UI', sans-serif;
-      color: #eee;
-    }
-
-    h1 {
-      font-size: 2.5rem;
-      letter-spacing: 4px;
-      margin-bottom: 24px;
-      text-transform: uppercase;
-      color: #e0e0e0;
-    }
-
-    .scoreboard {
-      display: flex;
-      gap: 32px;
-      margin-bottom: 24px;
-    }
-
-    .score-box {
-      text-align: center;
-      background: #16213e;
-      border-radius: 12px;
-      padding: 12px 24px;
-      min-width: 80px;
-    }
-
-    .score-box .label {
-      font-size: 0.75rem;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: #888;
-    }
-
-    .score-box.x .label { color: #e94560; }
-    .score-box.o .label { color: #0f9b8e; }
-
-    .score-box .value {
-      font-size: 2rem;
-      font-weight: bold;
-      margin-top: 4px;
-    }
-
-    .score-box.x .value { color: #e94560; }
-    .score-box.o .value { color: #0f9b8e; }
-
-    .status {
-      font-size: 1.1rem;
-      height: 28px;
-      margin-bottom: 20px;
-      letter-spacing: 1px;
-      color: #aaa;
-      transition: color 0.2s;
-    }
-
-    .status.win { color: #f0c040; font-weight: bold; }
-
-    .board {
-      display: grid;
-      grid-template-columns: repeat(3, 110px);
-      grid-template-rows: repeat(3, 110px);
-      gap: 8px;
-    }
-
-    .cell {
-      background: #16213e;
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 3rem;
-      font-weight: bold;
-      cursor: pointer;
-      transition: background 0.15s, transform 0.1s;
-      user-select: none;
-    }
-
-    .cell:hover:not(.taken) {
-      background: #0f3460;
-      transform: scale(1.04);
-    }
-
-    .cell.x { color: #e94560; }
-    .cell.o { color: #0f9b8e; }
-    .cell.taken { cursor: default; }
-    .cell.winning { background: #0f3460; box-shadow: 0 0 12px rgba(240,192,64,0.4); }
-
-    .buttons {
-      display: flex;
-      gap: 16px;
-      margin-top: 28px;
-    }
-
-    button {
-      padding: 10px 28px;
-      border: none;
-      border-radius: 8px;
-      font-size: 0.9rem;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      cursor: pointer;
-      transition: opacity 0.2s, transform 0.1s;
-    }
-
-    button:hover { opacity: 0.85; transform: translateY(-1px); }
-    button:active { transform: translateY(0); }
-
-    .btn-restart {
-      background: #e94560;
-      color: #fff;
-    }
-
-    .btn-reset-score {
-      background: #333;
-      color: #aaa;
-    }
-
-    .mode-selector {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 20px;
-    }
-
-    .mode-btn {
-      padding: 7px 20px;
-      border-radius: 20px;
-      border: 2px solid #333;
-      background: transparent;
-      color: #888;
-      font-size: 0.8rem;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .mode-btn.active {
-      border-color: #e94560;
-      color: #e94560;
-      background: rgba(233,69,96,0.1);
-    }
-
-    .mode-btn:hover { transform: translateY(0); opacity: 1; }
-  </style>
+  <title>Switzerland Mountain Explorer</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+  <link rel="stylesheet" href="style.css" />
+  <script async src="https://ga.jspm.io/npm:es-module-shims@1.8.0/dist/es-module-shims.js"></script>
+  <script type="importmap">{"imports":{"three":"https://cdnjs.cloudflare.com/ajax/libs/three.js/0.158.0/three.module.min.js"}}</script>
 </head>
 <body>
-  <h1>Tic Tac Toe</h1>
 
-  <div class="mode-selector">
-    <button class="mode-btn active" id="btn2p" onclick="setMode('2p')">2 Players</button>
-    <button class="mode-btn" id="btnAI" onclick="setMode('ai')">vs AI</button>
+<div id="sidebar">
+  <div id="sidebar-header">
+    <h1>Switzerland Mountain Explorer</h1>
+    <div id="filter-count">Loading mountains…</div>
   </div>
 
-  <div class="scoreboard">
-    <div class="score-box x">
-      <div class="label" id="label-x">Player X</div>
-      <div class="value" id="score-x">0</div>
+  <div id="sidebar-filters">
+
+    <div class="filter-section">
+      <h3>Elevation &amp; Terrain</h3>
+
+      <div class="filter-group">
+        <label>Elevation (m) <span id="val-elev">0 – 5000</span></label>
+        <div class="range-row">
+          <input type="range" id="elev-min" min="0" max="5000" value="0" step="50">
+          <input type="range" id="elev-max" min="0" max="5000" value="5000" step="50">
+        </div>
+      </div>
+
+      <div class="filter-group">
+        <label>Prominence (m) <span id="val-prom">0 – 5000</span></label>
+        <div class="range-row">
+          <input type="range" id="prom-min" min="0" max="5000" value="0" step="50">
+          <input type="range" id="prom-max" min="0" max="5000" value="5000" step="50">
+        </div>
+      </div>
+
+      <div class="filter-group">
+        <label>Isolation (km) <span id="val-isol">0 – 600</span></label>
+        <div class="range-row">
+          <input type="range" id="isol-min" min="0" max="600" value="0" step="5">
+          <input type="range" id="isol-max" min="0" max="600" value="600" step="5">
+        </div>
+      </div>
     </div>
-    <div class="score-box" style="color:#aaa;">
-      <div class="label">Draws</div>
-      <div class="value" id="score-draw">0</div>
+
+    <div class="filter-section">
+      <h3>Ratings</h3>
+
+      <div class="filter-group">
+        <label>Difficulty <span id="val-diff">1 – 5</span></label>
+        <div class="range-row">
+          <input type="range" id="diff-min" min="1" max="5" value="1" step="1">
+          <input type="range" id="diff-max" min="1" max="5" value="5" step="1">
+        </div>
+      </div>
+
+      <div class="filter-group">
+        <label>Beauty <span id="val-beauty">1 – 5</span></label>
+        <div class="range-row">
+          <input type="range" id="beauty-min" min="1" max="5" value="1" step="1">
+          <input type="range" id="beauty-max" min="1" max="5" value="5" step="1">
+        </div>
+      </div>
+
+      <div class="filter-group">
+        <label>Nature <span id="val-nature">1 – 5</span></label>
+        <div class="range-row">
+          <input type="range" id="nature-min" min="1" max="5" value="1" step="1">
+          <input type="range" id="nature-max" min="1" max="5" value="5" step="1">
+        </div>
+      </div>
     </div>
-    <div class="score-box o">
-      <div class="label" id="label-o">Player O</div>
-      <div class="value" id="score-o">0</div>
+
+    <div class="filter-section">
+      <h3>Tags</h3>
+      <div class="tag-toggle">
+        <button id="tag-mode-any" class="active" onclick="setTagMode('any')">Match Any</button>
+        <button id="tag-mode-all" onclick="setTagMode('all')">Match All</button>
+      </div>
+      <div class="tags-grid" id="tags-grid"></div>
     </div>
+
   </div>
 
-  <div class="status" id="status">X's turn</div>
-
-  <div class="board" id="board">
-    <div class="cell" onclick="handleClick(0)"></div>
-    <div class="cell" onclick="handleClick(1)"></div>
-    <div class="cell" onclick="handleClick(2)"></div>
-    <div class="cell" onclick="handleClick(3)"></div>
-    <div class="cell" onclick="handleClick(4)"></div>
-    <div class="cell" onclick="handleClick(5)"></div>
-    <div class="cell" onclick="handleClick(6)"></div>
-    <div class="cell" onclick="handleClick(7)"></div>
-    <div class="cell" onclick="handleClick(8)"></div>
+  <div id="sidebar-footer">
+    <button id="btn-reset" onclick="resetFilters()">Reset All Filters</button>
   </div>
+</div>
 
-  <div class="buttons">
-    <button class="btn-restart" onclick="restart()">New Game</button>
-    <button class="btn-reset-score" onclick="resetScore()">Reset Score</button>
+<div id="map"></div>
+
+<div id="peak-card">
+  <canvas id="peak-canvas"></canvas>
+  <div id="peak-info">
+    <div id="peak-name"></div>
+    <div id="peak-canton"></div>
+    <div class="peak-stats">
+      <div class="stat"><div class="stat-label">Elevation</div><div class="stat-val" id="si-elev"></div></div>
+      <div class="stat"><div class="stat-label">Prominence</div><div class="stat-val" id="si-prom"></div></div>
+      <div class="stat"><div class="stat-label">Isolation</div><div class="stat-val" id="si-isol"></div></div>
+      <div class="stat"><div class="stat-label">Canton</div><div class="stat-val" id="si-canton"></div></div>
+    </div>
+    <div class="rating-row"><span class="rating-label">Difficulty</span><span class="stars" id="si-diff"></span></div>
+    <div class="rating-row"><span class="rating-label">Beauty</span><span class="stars" id="si-beauty"></span></div>
+    <div class="rating-row"><span class="rating-label">Nature</span><span class="stars" id="si-nature"></span></div>
+    <div class="peak-tags" id="si-tags"></div>
   </div>
+</div>
 
-  <script>
-    const WINS = [
-      [0,1,2],[3,4,5],[6,7,8],
-      [0,3,6],[1,4,7],[2,5,8],
-      [0,4,8],[2,4,6]
-    ];
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="mountains.js"></script>
+<script type="module" src="app.js"></script>
 
-    let board = Array(9).fill(null);
-    let current = 'X';
-    let gameOver = false;
-    let mode = '2p';
-    let scores = { X: 0, O: 0, draw: 0 };
-
-    function setMode(m) {
-      mode = m;
-      document.getElementById('btn2p').classList.toggle('active', m === '2p');
-      document.getElementById('btnAI').classList.toggle('active', m === 'ai');
-      document.getElementById('label-o').textContent = m === 'ai' ? 'AI (O)' : 'Player O';
-      document.getElementById('label-x').textContent = 'Player X';
-      restart();
-    }
-
-    function handleClick(idx) {
-      if (gameOver || board[idx]) return;
-      if (mode === 'ai' && current === 'O') return;
-      play(idx);
-      if (mode === 'ai' && !gameOver && current === 'O') {
-        setTimeout(aiMove, 350);
-      }
-    }
-
-    function play(idx) {
-      board[idx] = current;
-      renderBoard();
-      const win = checkWin();
-      if (win) {
-        markWin(win);
-        scores[current]++;
-        updateScores();
-        setStatus(`${current} wins!`, true);
-        gameOver = true;
-      } else if (board.every(Boolean)) {
-        scores.draw++;
-        updateScores();
-        setStatus("It's a draw!", false);
-        gameOver = true;
-      } else {
-        current = current === 'X' ? 'O' : 'X';
-        const who = mode === 'ai' && current === 'O' ? 'AI (O)' : `${current}`;
-        setStatus(`${who}'s turn`);
-      }
-    }
-
-    function aiMove() {
-      const idx = bestMove();
-      play(idx);
-    }
-
-    function bestMove() {
-      // minimax
-      let best = -Infinity, move = -1;
-      for (let i = 0; i < 9; i++) {
-        if (!board[i]) {
-          board[i] = 'O';
-          const score = minimax(board, 0, false);
-          board[i] = null;
-          if (score > best) { best = score; move = i; }
-        }
-      }
-      return move;
-    }
-
-    function minimax(b, depth, isMax) {
-      const win = checkWinOn(b);
-      if (win === 'O') return 10 - depth;
-      if (win === 'X') return depth - 10;
-      if (b.every(Boolean)) return 0;
-
-      if (isMax) {
-        let best = -Infinity;
-        for (let i = 0; i < 9; i++) {
-          if (!b[i]) {
-            b[i] = 'O';
-            best = Math.max(best, minimax(b, depth + 1, false));
-            b[i] = null;
-          }
-        }
-        return best;
-      } else {
-        let best = Infinity;
-        for (let i = 0; i < 9; i++) {
-          if (!b[i]) {
-            b[i] = 'X';
-            best = Math.min(best, minimax(b, depth + 1, true));
-            b[i] = null;
-          }
-        }
-        return best;
-      }
-    }
-
-    function checkWin() { return checkWinOn(board); }
-
-    function checkWinOn(b) {
-      for (const [a, c, d] of WINS) {
-        if (b[a] && b[a] === b[c] && b[a] === b[d]) return [a, c, d];
-      }
-      return null;
-    }
-
-    function markWin(combo) {
-      const cells = document.querySelectorAll('.cell');
-      combo.forEach(i => cells[i].classList.add('winning'));
-    }
-
-    function renderBoard() {
-      const cells = document.querySelectorAll('.cell');
-      cells.forEach((cell, i) => {
-        cell.textContent = board[i] || '';
-        cell.className = 'cell' + (board[i] ? ` ${board[i].toLowerCase()} taken` : '');
-      });
-    }
-
-    function setStatus(msg, win = false) {
-      const el = document.getElementById('status');
-      el.textContent = msg;
-      el.className = 'status' + (win ? ' win' : '');
-    }
-
-    function updateScores() {
-      document.getElementById('score-x').textContent = scores.X;
-      document.getElementById('score-o').textContent = scores.O;
-      document.getElementById('score-draw').textContent = scores.draw;
-    }
-
-    function restart() {
-      board = Array(9).fill(null);
-      current = 'X';
-      gameOver = false;
-      renderBoard();
-      const who = mode === 'ai' ? 'Player X' : 'X';
-      setStatus(`${who}'s turn`);
-    }
-
-    function resetScore() {
-      scores = { X: 0, O: 0, draw: 0 };
-      updateScores();
-      restart();
-    }
-  </script>
 </body>
 </html>
